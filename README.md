@@ -1,4 +1,4 @@
-# tic-tac-toe-game-portuguse
+# tic-tac-toe-game-portuguese
 
 ## Explanation
 Tic Tac Toe is a two-player game that is played on a 3x3 grid. The players take turns placing their symbol (either an "X" or an "O") in one of the empty cells on the board. The first player to get three of their symbols in a row (horizontally, vertically, or diagonally) wins the game.
