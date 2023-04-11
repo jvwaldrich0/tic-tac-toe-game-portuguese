@@ -1,75 +1,78 @@
+BOARD_SIZE = 3
+
 def print_board(board):
     print("  0 1 2")
-    for i in range(3):
-        row = str(i) + " "
-        for j in range(3):
-            if board[i][j] == None:
-                row += "."
-            else:
-                row += board[i][j]
-            if j < 2:
-                row += "|"
+    for i in range(BOARD_SIZE):
+        row = f"{i} "
+        for j in range(BOARD_SIZE):
+            symbol = board[i][j] if board[i][j] is not None else "."
+            row += symbol + "|" if j < BOARD_SIZE - 1 else symbol
         print(row)
     print()
 
 def is_winner(board, player):
-    # Verifica se alguma das linhas está completa
-    for i in range(3):
-        if board[i][0] == player and board[i][1] == player and board[i][2] == player:
+    # Check rows
+    for i in range(BOARD_SIZE):
+        if all(board[i][j] == player for j in range(BOARD_SIZE)):
             return True
 
-    # Verifica se alguma das colunas está completa
-    for j in range(3):
-        if board[0][j] == player and board[1][j] == player and board[2][j] == player:
+    # Check columns
+    for j in range(BOARD_SIZE):
+        if all(board[i][j] == player for i in range(BOARD_SIZE)):
             return True
 
-    # Verifica se alguma das diagonais está completa
-    if board[0][0] == player and board[1][1] == player and board[2][2] == player:
+    # Check diagonals
+    if all(board[i][i] == player for i in range(BOARD_SIZE)):
         return True
-    if board[0][2] == player and board[1][1] == player and board[2][0] == player:
+    if all(board[i][BOARD_SIZE - i - 1] == player for i in range(BOARD_SIZE)):
         return True
 
     return False
 
 def is_tie(board):
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == None:
-                return False
-    return True
+    return all(board[i][j] is not None for i in range(BOARD_SIZE) for j in range(BOARD_SIZE))
 
 def play():
-    board = [[None for _ in range(3)] for _ in range(3)]
+    board = [[None] * BOARD_SIZE for _ in range(BOARD_SIZE)]
     current_player = "X"
 
     while True:
         print_board(board)
 
-        # Verifica se alguém ganhou
+        # Check for winner
         if is_winner(board, current_player):
-            print(current_player, "venceu!")
+            print(f"{current_player} venceu!")
             return
 
-        # Verifica se é empate
+        # Check for tie
         if is_tie(board):
             print("Empate!")
             return
 
-        # Pede a jogada do jogador atual
-        row = int(input("Digite a linha: "))
-        col = int(input("Digite a coluna: "))
+        # Ask for current player's move
+        row, col = get_move(board, current_player)
 
-        # Verifica se a jogada é válida
-        if row < 0 or row > 2 or col < 0 or col > 2 or board[row][col] != None:
+        # Make the move
+        board[row][col] = current_player
+
+        # Switch player
+        current_player = "O" if current_player == "X" else "X"
+
+def get_move(board, current_player):
+    while True:
+        try:
+            row = int(input("Digite a linha: "))
+            col = int(input("Digite a coluna: "))
+            if not is_valid_move(board, row, col):
+                raise ValueError
+            break
+        except ValueError:
             print("Jogada inválida, tente novamente.")
-        else:
-            board[row][col] = current_player
 
-            # Troca o jogador atual
-            if current_player == "X":
-                current_player = "O"
-            else:
-                current_player = "X"
+    return row, col
 
-# Inicia o jogo
+def is_valid_move(board, row, col):
+    return 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE and board[row][col] is None
+
+# Start the game
 play()
